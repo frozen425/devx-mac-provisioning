@@ -1,0 +1,35 @@
+name: Security Gate
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+  osv-scan:
+    name: OSV Scanner
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Run OSV-Scanner
+        uses: google/osv-scanner-action/bootstrap-action@v1
+        with:
+          scan-args: -r .
+
+  syntax-and-secrets:
+    name: Syntax & Secrets Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Run Syntax and Secret Checks
+        run: |
+          # Run the custom preflight checks for shell syntax and pattern leaks
+          bash scripts/preflight-check.sh

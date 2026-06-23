@@ -1,0 +1,40 @@
+# Global shell initialization for macOS Workstations
+# Sourced/linked by users' zsh profiles to maintain consistency
+
+# Prevent duplicate paths in path array
+typeset -U path
+
+# Initialize Homebrew on Apple Silicon and Intel Macs
+if [[ -f "/opt/homebrew/bin/brew" ]]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [[ -f "/usr/local/bin/brew" ]]; then
+    eval "$(/usr/local/bin/brew shellenv)"
+fi
+
+# Initialize development tools environment manager (mise)
+if command -v mise >/dev/null 2>&1; then
+    eval "$(mise activate zsh)"
+fi
+
+# Environment settings
+export EDITOR="nano"
+export LANG="en_US.UTF-8"
+export LC_ALL="en_US.UTF-8"
+
+# Set secure umask
+umask 022
+
+# Safe, convenient aliases
+alias ll="ls -lahF"
+alias la="ls -A"
+alias grep="grep --color=auto"
+
+# History and shell behavior optimizations
+setopt HIST_IGNORE_DUPS
+setopt HIST_IGNORE_SPACE
+setopt HIST_REDUCE_BLANKS
+setopt SHARE_HISTORY
+
+# Clean, professional prompt
+autoload -Uz colors && colors
+PROMPT='%F{12}%n%f@%F{14}%m%f %F{10}%~%f %# '

@@ -1,0 +1,12 @@
+# Local macOS files
+.DS_Store
+
+# Temporary build outputs
+dist/
+packaging/build_root/
+packaging/scripts/
+*.pkg
+
+# Environment variable files containing local overrides/secrets
+.env
+.env.*
