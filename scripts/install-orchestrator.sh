@@ -133,4 +133,26 @@ if [ -f "$GLOBAL_ZSHRC" ]; then
     fi
 fi
 
+# 7. Configure GPG Agent for Graphical Passphrase Entry
+GPG_CONF_DIR="$USER_HOME/.gnupg"
+GPG_AGENT_CONF="$GPG_CONF_DIR/gpg-agent.conf"
+log "Configuring GPG Agent to use pinentry-mac..."
+sudo -u "$CONSOLE_USER" mkdir -p "$GPG_CONF_DIR"
+sudo -u "$CONSOLE_USER" chmod 700 "$GPG_CONF_DIR"
+
+if [ "$(uname -m)" = "arm64" ]; then
+    PINENTRY_PATH="/opt/homebrew/bin/pinentry-mac"
+else
+    PINENTRY_PATH="/usr/local/bin/pinentry-mac"
+fi
+
+if [ ! -f "$GPG_AGENT_CONF" ] || ! grep -q "pinentry-program" "$GPG_AGENT_CONF" 2>/dev/null; then
+    echo "pinentry-program $PINENTRY_PATH" | sudo -u "$CONSOLE_USER" tee -a "$GPG_AGENT_CONF" >/dev/null
+    log "GPG Agent configured with pinentry-mac."
+    # Reload agent to apply configuration
+    sudo -u "$CONSOLE_USER" -i env PATH="$PATH" gpg-connect-agent reloadagent /bye || true
+else
+    log "GPG Agent already configured with pinentry-program."
+fi
+
 log "macOS Fleet Provisioning Orchestration Completed Successfully!"
