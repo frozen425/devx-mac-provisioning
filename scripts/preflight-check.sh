@@ -90,4 +90,25 @@ else
     log "All shell scripts passed syntax validation."
 fi
 
+# 5. Lint shell scripts with ShellCheck (if installed)
+if command -v shellcheck >/dev/null 2>&1; then
+    log "Linting shell scripts with ShellCheck..."
+    SHELLCHECK_ERRORS=0
+    while IFS= read -r sh_file; do
+        if ! shellcheck "$sh_file"; then
+            error "ShellCheck lint failed for: $sh_file"
+            SHELLCHECK_ERRORS=$((SHELLCHECK_ERRORS + 1))
+        fi
+    done < <(find "$REPO_ROOT" -name "*.sh")
+
+    if [ "$SHELLCHECK_ERRORS" -ne 0 ]; then
+        error "ShellCheck linting checks failed."
+        exit 1
+    else
+        log "All shell scripts passed ShellCheck linting."
+    fi
+else
+    warn "shellcheck not found. Skipping linting. Install it with 'brew install shellcheck' to enable."
+fi
+
 log "Preflight checks completed successfully!"

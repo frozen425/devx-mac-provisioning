@@ -1,7 +1,7 @@
 [tools]
-go = "1.22"
-node = "20"
-python = "3.12"
+go = "1.26.4"
+node = "22.23.0"
+python = "3.12.13"
 
 [settings]
 experimental = true

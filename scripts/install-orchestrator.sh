@@ -69,7 +69,47 @@ else
     exit 1
 fi
 
-# 5. Link Global Zsh Profile
+# 5. Set up mise & Build sm from source
+USER_HOME="/Users/$CONSOLE_USER"
+MISE_CONFIG_SRC="/Library/Application Support/DevX/assets/mise.config.toml"
+if [ ! -f "$MISE_CONFIG_SRC" ]; then
+    # Fallback to local script relative path for manual runs
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    MISE_CONFIG_SRC="$(dirname "$SCRIPT_DIR")/assets/mise.config.toml"
+fi
+
+if [ -f "$MISE_CONFIG_SRC" ]; then
+    log "Configuring mise global presets..."
+    sudo -u "$CONSOLE_USER" mkdir -p "$USER_HOME/.config/mise"
+    sudo -u "$CONSOLE_USER" cp "$MISE_CONFIG_SRC" "$USER_HOME/.config/mise/config.toml"
+    
+    # Initialize/install mise packages (Go, Node, Python)
+    log "Installing mise runtimes (Go, Node, Python)..."
+    MISE_DIR="$(dirname "$BREW_PATH")"
+    sudo -u "$CONSOLE_USER" -i env PATH="$PATH:$MISE_DIR" "$MISE_DIR/mise" install --yes
+else
+    log "Warning: mise config source not found. Skipping runtime installation."
+fi
+
+# Clone and build sm
+log "Setting up local working directory..."
+WORKING_DIR="$USER_HOME/working"
+sudo -u "$CONSOLE_USER" mkdir -p "$WORKING_DIR"
+
+if [ ! -d "$WORKING_DIR/sm" ]; then
+    log "Cloning sm repository..."
+    sudo -u "$CONSOLE_USER" git clone https://github.com/frozen425/sm.git "$WORKING_DIR/sm"
+else
+    log "sm repository already exists. Updating..."
+    sudo -u "$CONSOLE_USER" git -C "$WORKING_DIR/sm" pull
+fi
+
+log "Compiling and installing sm..."
+MISE_DIR="$(dirname "$BREW_PATH")"
+sudo -u "$CONSOLE_USER" -i env PATH="$PATH:$MISE_DIR" bash -c "cd ~/working/sm && \"$MISE_DIR/mise\" exec -- go install"
+log "sm binary compiled and installed."
+
+# 6. Link Global Zsh Profile
 GLOBAL_ZSHRC="/Library/Application Support/DevX/assets/zshrc.global"
 if [ -f "$GLOBAL_ZSHRC" ]; then
     log "Configuring global shell environment..."

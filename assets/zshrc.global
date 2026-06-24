@@ -16,6 +16,9 @@ if command -v mise >/dev/null 2>&1; then
     eval "$(mise activate zsh)"
 fi
 
+# Add custom binaries (like go install outputs) to PATH
+path=("$HOME/go/bin" $path)
+
 # Environment settings
 export EDITOR="nano"
 export LANG="en_US.UTF-8"

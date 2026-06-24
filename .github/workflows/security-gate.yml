@@ -15,10 +15,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
       - name: Run OSV-Scanner
-        uses: google/osv-scanner-action/bootstrap-action@v1
+        uses: google/osv-scanner-action/bootstrap-action@19ec1116569a47416e11a45848722b1af31a857b # v1.9.0
         with:
           scan-args: -r .
 
@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
       - name: Run Syntax and Secret Checks
         run: |
