@@ -1,5 +1,5 @@
-tap "mondoohq/mondoo", trusted: true
-tap "hashicorp/tap", trusted: true
+tap "mondoohq/mondoo"
+tap "hashicorp/tap"
 
 brew "git"
 brew "gh"
