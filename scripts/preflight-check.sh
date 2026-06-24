@@ -21,6 +21,13 @@ error() {
     echo -e "${RED}[ERROR] $*${NC}" >&2
 }
 
+# Ensure the script is NOT run as root/sudo
+if [ "$EUID" -eq 0 ]; then
+    error "This preflight check script must NOT be run as root / sudo."
+    echo "Please run it as your standard user: ./scripts/preflight-check.sh" >&2
+    exit 1
+fi
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(dirname "$SCRIPT_DIR")"
 

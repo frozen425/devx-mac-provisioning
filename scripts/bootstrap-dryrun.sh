@@ -29,6 +29,13 @@ info() {
     echo -e "${BLUE}[DIAG] $*${NC}"
 }
 
+# Ensure the script is NOT run as root/sudo
+if [ "$EUID" -eq 0 ]; then
+    error "This diagnostic dry-run script must NOT be run as root / sudo."
+    info "Please run it as your standard user: ./scripts/bootstrap-dryrun.sh"
+    exit 1
+fi
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(dirname "$SCRIPT_DIR")"
 BREWFILE="$REPO_ROOT/assets/Brewfile"
