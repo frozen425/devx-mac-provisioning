@@ -61,8 +61,10 @@ fi
 
 if [ -f "$BREWFILE_PATH" ]; then
     # Clean up deprecated homebrew/bundle tap if previously cached/installed
-    log "Ensuring homebrew/bundle tap is untapped..."
-    sudo -u "$CONSOLE_USER" -i env PATH="$PATH" "$BREW_PATH" untap homebrew/bundle || true
+    if sudo -u "$CONSOLE_USER" -i env PATH="$PATH" "$BREW_PATH" tap | grep -qi "homebrew/bundle"; then
+        log "Untapping deprecated homebrew/bundle..."
+        sudo -u "$CONSOLE_USER" -i env PATH="$PATH" "$BREW_PATH" untap homebrew/bundle || true
+    fi
 
     # Explicitly trust custom taps to support Homebrew 6.0+ non-interactively
     log "Configuring Homebrew tap trust for custom repositories..."
