@@ -45,9 +45,12 @@ if [ ! -f "$BREW_PATH" ]; then
     sudo -u "$CONSOLE_USER" -i env NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     log "Homebrew installation completed."
 else
-    log "Homebrew is already installed at $BREW_PATH. Updating..."
-    sudo -u "$CONSOLE_USER" -i env PATH="$PATH" "$BREW_PATH" update
-    log "Homebrew update completed."
+    log "Homebrew is already installed at $BREW_PATH. Attempting to update..."
+    if ! sudo -u "$CONSOLE_USER" -i env PATH="$PATH" "$BREW_PATH" update; then
+        log "Warning: Homebrew update failed. Attempting to repair and update using the official installer..."
+        sudo -u "$CONSOLE_USER" -i env NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    fi
+    log "Homebrew update/repair completed."
 fi
 
 # 3. Ensure Homebrew environment is activated for this session
