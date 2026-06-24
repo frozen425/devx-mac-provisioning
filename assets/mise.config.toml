@@ -1,5 +1,6 @@
 [tools]
 go = "1.26.4"
+golangci-lint = "1.64.2"
 node = "22.23.0"
 python = "3.12.13"
 
