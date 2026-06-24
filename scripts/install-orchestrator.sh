@@ -60,9 +60,18 @@ if [ ! -f "$BREWFILE_PATH" ]; then
 fi
 
 if [ -f "$BREWFILE_PATH" ]; then
+    # Clean up deprecated homebrew/bundle tap if previously cached/installed
+    log "Ensuring homebrew/bundle tap is untapped..."
+    sudo -u "$CONSOLE_USER" -i env PATH="$PATH" "$BREW_PATH" untap homebrew/bundle || true
+
+    # Explicitly trust custom taps to support Homebrew 6.0+ non-interactively
+    log "Configuring Homebrew tap trust for custom repositories..."
+    sudo -u "$CONSOLE_USER" -i env PATH="$PATH" "$BREW_PATH" trust mondoohq/mondoo || true
+    sudo -u "$CONSOLE_USER" -i env PATH="$PATH" "$BREW_PATH" trust hashicorp/tap || true
+
     log "Installing fleet baseline dependencies from $BREWFILE_PATH..."
-    # Run brew bundle as the local user so packages are owned/managed by the user
-    sudo -u "$CONSOLE_USER" -i env PATH="$PATH" "$BREW_PATH" bundle install --file="$BREWFILE_PATH"
+    # Run brew bundle as the local user with HOMEBREW_NO_REQUIRE_TAP_TRUST=1 as a fallback
+    sudo -u "$CONSOLE_USER" -i env PATH="$PATH" HOMEBREW_NO_REQUIRE_TAP_TRUST=1 "$BREW_PATH" bundle install --file="$BREWFILE_PATH"
     log "Dependencies install completed."
 else
     error "Brewfile not found at $BREWFILE_PATH"

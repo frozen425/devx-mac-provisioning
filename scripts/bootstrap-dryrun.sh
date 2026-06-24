@@ -4,6 +4,9 @@
 
 set -euo pipefail
 
+# Ensure Homebrew doesn't prompt for tap trust in automated dry-runs
+export HOMEBREW_NO_REQUIRE_TAP_TRUST=1
+
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[0;33m'

@@ -1,6 +1,5 @@
-tap "homebrew/bundle"
-tap "mondoohq/mondoo"
-tap "hashicorp/tap"
+tap "mondoohq/mondoo", trusted: true
+tap "hashicorp/tap", trusted: true
 
 brew "git"
 brew "gh"
@@ -14,8 +13,8 @@ brew "pre-commit"
 brew "gnupg"
 brew "shellcheck"
 brew "osv-scanner"
-brew "cnspec"
-brew "mql"
+brew "mondoohq/mondoo/cnspec"
+brew "mondoohq/mondoo/mql"
 brew "uv"
 brew "hashicorp/tap/terraform"
 brew "opentofu"
