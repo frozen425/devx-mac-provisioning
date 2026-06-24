@@ -123,6 +123,28 @@ if [ "$BREW_INSTALLED" -eq 1 ]; then
     # Test formula info resolution
     for brew in $BREWS; do
         echo -n "    Resolving formula '$brew' metadata... "
+        
+        # Check if the formula is from a custom tap
+        # If it has 2 slashes, it is fully qualified: user/repo/formula
+        slash_count=$(tr -cd '/' <<< "$brew" | wc -c | tr -d ' ')
+        if [ "$slash_count" -eq 2 ]; then
+            # Extract tap name: user/repo
+            tap="${brew%/*}"
+            # Check if this tap is currently installed
+            if ! $BREW_PATH tap | grep -q "^$tap$"; then
+                # Tap not installed. Check if GitHub repo is accessible
+                owner="${tap%%/*}"
+                repo="${tap##*/}"
+                github_url="https://github.com/${owner}/homebrew-${repo}"
+                if curl -fsSL -o /dev/null "$github_url" 2>/dev/null || curl -fsSL -o /dev/null "https://github.com/${owner}/${repo}" 2>/dev/null; then
+                    echo -e "${YELLOW}Pending (Tap '$tap' not installed but repository is accessible)${NC}"
+                else
+                    echo -e "${RED}Failed (Tap '$tap' not installed and repository inaccessible)${NC}"
+                fi
+                continue
+            fi
+        fi
+
         if $BREW_PATH info "$brew" >/dev/null 2>&1; then
             echo -e "${GREEN}OK${NC}"
         else
