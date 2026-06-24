@@ -76,9 +76,9 @@ if [ -f "$BREWFILE_PATH" ]; then
     sudo -u "$CONSOLE_USER" -i env PATH="$PATH" "$BREW_PATH" trust mondoohq/mondoo || true
     sudo -u "$CONSOLE_USER" -i env PATH="$PATH" "$BREW_PATH" trust hashicorp/tap || true
 
-    log "Installing fleet baseline dependencies from $BREWFILE_PATH..."
+    log "Installing/upgrading fleet baseline dependencies from $BREWFILE_PATH..."
     # Run brew bundle as the local user with HOMEBREW_NO_REQUIRE_TAP_TRUST=1 as a fallback
-    sudo -u "$CONSOLE_USER" -i env PATH="$PATH" HOMEBREW_NO_REQUIRE_TAP_TRUST=1 "$BREW_PATH" bundle install --file="$BREWFILE_PATH"
+    sudo -u "$CONSOLE_USER" -i env PATH="$PATH" HOMEBREW_NO_REQUIRE_TAP_TRUST=1 "$BREW_PATH" bundle install --file="$BREWFILE_PATH" --upgrade
     log "Dependencies install completed."
 else
     error "Brewfile not found at $BREWFILE_PATH"
